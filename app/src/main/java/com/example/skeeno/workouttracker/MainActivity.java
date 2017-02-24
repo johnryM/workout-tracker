@@ -33,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
 
             FragmentManager fm = getSupportFragmentManager();
-            RecyclerviewFragment rcFragment = (RecyclerviewFragment) fm.findFragmentById(R.id.recycler_view_frag);
+            RecyclerviewFragment rcFragment = (RecyclerviewFragment) fm.findFragmentById(R.id.fragment_recycler_view_container);
 
             if (rcFragment == null) {
-                RecyclerviewFragment.newInstance();
+                rcFragment = RecyclerviewFragment.newInstance();
                 fm.beginTransaction().add(R.id.content_main, rcFragment).commit();
             }
         }

@@ -61,7 +61,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
 
         public void bindWorkoutDataToHolder(Workout workout) {
             mWorkoutTitle.setText(workout.getName());
-            mDateText.setText(workout.getDate().toString());
+            mDateText.setText(workout.getDate().getTime().toString());
             mCompletedCheckbox.setChecked(workout.isCompleted());
         }
     }
