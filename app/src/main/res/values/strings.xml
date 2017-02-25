@@ -4,4 +4,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="workout_title_string">Workout name</string>
+    <string name="workout_date">Workout date</string>
+    <string name="completed">Completed</string>
+    <string name="done_text">Done</string>
 </resources>

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.skeeno.workouttracker.activities.WorkoutEditor;
 import com.example.skeeno.workouttracker.fragments.RecyclerviewFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,8 +26,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                startActivity(WorkoutEditor.newInstance(MainActivity.this));
             }
         });
 

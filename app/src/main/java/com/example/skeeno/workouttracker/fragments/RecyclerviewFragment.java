@@ -63,12 +63,12 @@ public class RecyclerviewFragment extends Fragment {
 
     public ArrayList<Workout> setUpTempData() {
         ArrayList<Workout> list = new ArrayList<>();
-        list.add(new Workout("Chest", new GregorianCalendar(2017, 0, 5), true, new ArrayList<Exercise>()));
-        list.add(new Workout("Shoulder", new GregorianCalendar(2017, 0, 7), true, new ArrayList<Exercise>()));
-        list.add(new Workout("Back", new GregorianCalendar(2017, 0, 9), true, new ArrayList<Exercise>()));
-        list.add(new Workout("Bicep", new GregorianCalendar(2017, 0, 11), true, new ArrayList<Exercise>()));
-        list.add(new Workout("Tricep", new GregorianCalendar(2017, 0, 13), true, new ArrayList<Exercise>()));
-        list.add(new Workout("Legs", new GregorianCalendar(2017, 0, 15), true, new ArrayList<Exercise>()));
+        list.add(new Workout("Chest", new GregorianCalendar(2017, 0, 5), false, new ArrayList<Exercise>()));
+        list.add(new Workout("Shoulder", new GregorianCalendar(2017, 0, 7), false, new ArrayList<Exercise>()));
+        list.add(new Workout("Back", new GregorianCalendar(2017, 0, 9), false, new ArrayList<Exercise>()));
+        list.add(new Workout("Bicep", new GregorianCalendar(2017, 0, 11), false, new ArrayList<Exercise>()));
+        list.add(new Workout("Tricep", new GregorianCalendar(2017, 0, 13), false, new ArrayList<Exercise>()));
+        list.add(new Workout("Legs", new GregorianCalendar(2017, 0, 15), false, new ArrayList<Exercise>()));
         return list;
     }
 }
