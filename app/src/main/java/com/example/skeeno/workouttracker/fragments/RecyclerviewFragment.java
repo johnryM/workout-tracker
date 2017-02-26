@@ -1,8 +1,9 @@
 package com.example.skeeno.workouttracker.fragments;
 
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.skeeno.workouttracker.R;
-import com.example.skeeno.workouttracker.model.Exercise;
 import com.example.skeeno.workouttracker.model.Workout;
 import com.example.skeeno.workouttracker.ui.WorkoutAdapter;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,17 +27,32 @@ import butterknife.Unbinder;
 public class RecyclerviewFragment extends Fragment {
 
 
+    public static final String EXTRA_WORKOUT_LIST = "workout_arraylist";
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
     private Unbinder mUnbinder;
+    private ArrayList<Workout> workoutArrayList = new ArrayList<>();
 
     public RecyclerviewFragment() {
         // Required empty public constructor
     }
 
-    public static RecyclerviewFragment newInstance() {
-        return new RecyclerviewFragment();
+    public static RecyclerviewFragment newInstance(ArrayList<Workout> wList) {
+        RecyclerviewFragment f = new RecyclerviewFragment();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList(EXTRA_WORKOUT_LIST, wList);
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            workoutArrayList = args.getParcelableArrayList(EXTRA_WORKOUT_LIST);
+        }
     }
 
     @Override
@@ -51,7 +65,7 @@ public class RecyclerviewFragment extends Fragment {
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(new WorkoutAdapter(setUpTempData()));
+        mRecyclerView.setAdapter(new WorkoutAdapter(workoutArrayList));
         return view;
     }
 
@@ -61,14 +75,5 @@ public class RecyclerviewFragment extends Fragment {
         mUnbinder.unbind();
     }
 
-    public ArrayList<Workout> setUpTempData() {
-        ArrayList<Workout> list = new ArrayList<>();
-        list.add(new Workout("Chest", new GregorianCalendar(2017, 0, 5), false, new ArrayList<Exercise>()));
-        list.add(new Workout("Shoulder", new GregorianCalendar(2017, 0, 7), false, new ArrayList<Exercise>()));
-        list.add(new Workout("Back", new GregorianCalendar(2017, 0, 9), false, new ArrayList<Exercise>()));
-        list.add(new Workout("Bicep", new GregorianCalendar(2017, 0, 11), false, new ArrayList<Exercise>()));
-        list.add(new Workout("Tricep", new GregorianCalendar(2017, 0, 13), false, new ArrayList<Exercise>()));
-        list.add(new Workout("Legs", new GregorianCalendar(2017, 0, 15), false, new ArrayList<Exercise>()));
-        return list;
-    }
+
 }
