@@ -11,11 +11,9 @@ import android.view.MenuItem;
 
 import com.example.skeeno.workouttracker.activities.WorkoutEditor;
 import com.example.skeeno.workouttracker.fragments.RecyclerviewFragment;
-import com.example.skeeno.workouttracker.model.WorkoutManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private WorkoutManager workoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +30,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        workoutManager = WorkoutManager.getInstance();
-
         if (savedInstanceState == null) {
 
             FragmentManager fm = getSupportFragmentManager();
             RecyclerviewFragment rcFragment = (RecyclerviewFragment) fm.findFragmentById(R.id.fragment_recycler_view_container);
 
             if (rcFragment == null) {
-                rcFragment = RecyclerviewFragment.newInstance(workoutManager.getWorkoutList());
+                rcFragment = RecyclerviewFragment.newInstance();
                 fm.beginTransaction().add(R.id.content_main, rcFragment).commit();
             }
         }

@@ -3,20 +3,29 @@ package com.example.skeeno.workouttracker.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.example.skeeno.workouttracker.utils.Helper;
+
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.UUID;
 
 /**
  * Created by skeeno on 11/02/2017.
  */
 
 public class Workout implements Parcelable {
-    String name;
-    GregorianCalendar date;
-    boolean isCompleted;
-    ArrayList<Exercise> exercises;
+    private String name;
+    private GregorianCalendar date;
+    private boolean isCompleted;
+    private ArrayList<Exercise> exercises;
+    private UUID uuid;
 
-    public Workout(String name, GregorianCalendar date, boolean isCompleted, ArrayList<Exercise> exercises) {
+    public Workout(UUID id) {
+        uuid = id;
+    }
+
+    public Workout(UUID id, String name, GregorianCalendar date, boolean isCompleted, ArrayList<Exercise> exercises) {
+        uuid = id;
         this.name = name;
         this.date = date;
         this.isCompleted = isCompleted;
@@ -25,7 +34,7 @@ public class Workout implements Parcelable {
 
     protected Workout(Parcel in) {
         name = in.readString();
-        date = convertMilisToDate(in.readLong());
+        date = Helper.convertMilisToDate(in.readLong());
         isCompleted = in.readByte() != 0;
         in.readTypedList(exercises, Exercise.CREATOR);
     }
@@ -45,7 +54,7 @@ public class Workout implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeLong(convertDateToMilis(date));
+        dest.writeLong(Helper.convertDateToMilis(date));
         dest.writeByte((byte) (isCompleted ? 1 : 0));
         dest.writeTypedList(exercises);
     }
@@ -94,13 +103,7 @@ public class Workout implements Parcelable {
         exercises.add(exercise);
     }
 
-    private long convertDateToMilis(GregorianCalendar date) {
-        return date.getTimeInMillis();
-    }
-
-    private GregorianCalendar convertMilisToDate(long time) {
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(time);
-        return cal;
+    public UUID getUuid() {
+        return uuid;
     }
 }

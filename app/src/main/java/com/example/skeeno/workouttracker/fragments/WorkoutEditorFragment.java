@@ -19,8 +19,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.skeeno.workouttracker.R;
+import com.example.skeeno.workouttracker.model.Workout;
+import com.example.skeeno.workouttracker.model.WorkoutManager;
 
 import java.util.GregorianCalendar;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,7 +114,13 @@ public class WorkoutEditorFragment extends Fragment {
 
         if (id == R.id.action_save_workout) {
             if (validateWorkout()) {
-                Toast.makeText(getContext(), "validated", Toast.LENGTH_SHORT).show();
+                WorkoutManager workoutManager = WorkoutManager.getInstance(getActivity());
+                Workout workout = new Workout(UUID.randomUUID(),
+                        mEditTextWorkoutName.getText().toString(),
+                        mCalendar,
+                        mCheckboxWorkoutCompleted.isChecked(),
+                        null);
+                workoutManager.addWorkout(workout);
             }
         }
         return super.onOptionsItemSelected(item);

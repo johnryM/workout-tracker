@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.example.skeeno.workouttracker.R;
 import com.example.skeeno.workouttracker.model.Workout;
+import com.example.skeeno.workouttracker.model.WorkoutManager;
 import com.example.skeeno.workouttracker.ui.WorkoutAdapter;
 
 import java.util.ArrayList;
@@ -27,32 +28,25 @@ import butterknife.Unbinder;
 public class RecyclerviewFragment extends Fragment {
 
 
-    public static final String EXTRA_WORKOUT_LIST = "workout_arraylist";
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
     private Unbinder mUnbinder;
-    private ArrayList<Workout> workoutArrayList = new ArrayList<>();
+
+    private WorkoutAdapter mWorkoutAdapter;
+
 
     public RecyclerviewFragment() {
         // Required empty public constructor
     }
 
-    public static RecyclerviewFragment newInstance(ArrayList<Workout> wList) {
-        RecyclerviewFragment f = new RecyclerviewFragment();
-        Bundle args = new Bundle();
-        args.putParcelableArrayList(EXTRA_WORKOUT_LIST, wList);
-        f.setArguments(args);
-        return f;
+    public static RecyclerviewFragment newInstance() {
+        return new RecyclerviewFragment();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle args = getArguments();
-        if (args != null) {
-            workoutArrayList = args.getParcelableArrayList(EXTRA_WORKOUT_LIST);
-        }
     }
 
     @Override
@@ -65,8 +59,21 @@ public class RecyclerviewFragment extends Fragment {
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(new WorkoutAdapter(workoutArrayList));
+
+        updateUI();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
     }
 
     @Override
@@ -75,5 +82,12 @@ public class RecyclerviewFragment extends Fragment {
         mUnbinder.unbind();
     }
 
+    private void updateUI() {
+        WorkoutManager workoutManager = WorkoutManager.getInstance(getActivity());
+        ArrayList<Workout> workouts = workoutManager.getWorkoutList();
+
+        mWorkoutAdapter = new WorkoutAdapter(workouts);
+        mRecyclerView.setAdapter(mWorkoutAdapter);
+    }
 
 }
