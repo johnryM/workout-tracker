@@ -25,9 +25,9 @@
         <!-- Tints the input fields like checkboxes and text fields -->
         <item name="colorAccent">@color/colorAccent</item>
         <!-- Applies to views in their normal state. -->
-        <item name="colorControlNormal">@color/colorPrimary</item>
+        <item name="colorControlNormal">@android:color/white</item>
         <!-- Applies to views in their activated state (i.e checked or switches) -->
-        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlActivated">@android:color/darker_gray</item>
         <!-- Applied to framework control highlights (i.e ripples or list selectors) -->
         <item name="colorControlHighlight">@color/colorPrimaryDark</item>
 

@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.ExerciseEditor" />
-        <activity android:name=".activities.WorkoutEditor"></activity>
+        <activity android:name=".activities.WorkoutEditor"
+            android:parentActivityName=".MainActivity"/>
     </application>
 
 </manifest>
