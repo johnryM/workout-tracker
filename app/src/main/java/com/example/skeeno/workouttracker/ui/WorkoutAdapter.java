@@ -44,6 +44,16 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
         return mWorkoutList.size();
     }
 
+    public void updateData(ArrayList<Workout> list) {
+        if (mWorkoutList != null) {
+            mWorkoutList.clear();
+            mWorkoutList.addAll(list);
+        } else {
+            mWorkoutList = list;
+        }
+        notifyDataSetChanged();
+    }
+
     public class WorkoutHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.workout_text)

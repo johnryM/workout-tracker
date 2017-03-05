@@ -4,15 +4,19 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.skeeno.workouttracker.database.WorkoutBaseHelper;
 import com.example.skeeno.workouttracker.database.WorkoutCursorWrapper;
 import com.example.skeeno.workouttracker.database.WorkoutDbSchema.WorkoutTable;
 import com.example.skeeno.workouttracker.utils.Helper;
+import com.example.skeeno.workouttracker.utils.RxUtils;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+
+import rx.Observable;
 
 
 /**
@@ -20,6 +24,8 @@ import java.util.UUID;
  */
 
 public class WorkoutManager {
+
+    public static final String TAG = WorkoutManager.class.getSimpleName();
 
     private static WorkoutManager instance;
     private static ArrayList<Workout> mWorkoutList;
@@ -41,7 +47,12 @@ public class WorkoutManager {
         return instance;
     }
 
-    public ArrayList<Workout> getWorkoutList() {
+
+    public Observable<ArrayList<Workout>> getObservableWorkoutData() {
+        return RxUtils.makeObservable(getCallableData(getWorkoutList()));
+    }
+
+    private ArrayList<Workout> getWorkoutList() {
         WorkoutCursorWrapper cursor = queryWorkouts(null, null);
         mWorkoutList.clear();
 
@@ -103,17 +114,6 @@ public class WorkoutManager {
         return values;
     }
 
-    public ArrayList<Workout> setUpTempData() {
-        ArrayList<Workout> list = new ArrayList<>();
-        mWorkoutList.add(new Workout(UUID.randomUUID(), "Chest", new GregorianCalendar(2017, 0, 5), false, new ArrayList<Exercise>()));
-        mWorkoutList.add(new Workout(UUID.randomUUID(), "Shoulder", new GregorianCalendar(2017, 0, 7), false, new ArrayList<Exercise>()));
-        mWorkoutList.add(new Workout(UUID.randomUUID(), "Back", new GregorianCalendar(2017, 0, 9), false, new ArrayList<Exercise>()));
-        mWorkoutList.add(new Workout(UUID.randomUUID(), "Bicep", new GregorianCalendar(2017, 0, 11), false, new ArrayList<Exercise>()));
-        mWorkoutList.add(new Workout(UUID.randomUUID(), "Tricep", new GregorianCalendar(2017, 0, 13), false, new ArrayList<Exercise>()));
-        mWorkoutList.add(new Workout(UUID.randomUUID(), "Legs", new GregorianCalendar(2017, 0, 15), false, new ArrayList<Exercise>()));
-        return list;
-    }
-
     public WorkoutCursorWrapper queryWorkouts(String whereClause, String [] whereArgs) {
         Cursor cursor = mDatabase.query(
                 WorkoutTable.NAME,
@@ -127,5 +127,14 @@ public class WorkoutManager {
         );
 
         return new WorkoutCursorWrapper(cursor);
+    }
+
+    private Callable<ArrayList<Workout>> getCallableData(final ArrayList<Workout> workouts) {
+        return  new Callable<ArrayList<Workout>>() {
+            @Override
+            public ArrayList<Workout> call() throws Exception {
+                return workouts;
+            }
+        };
     }
 }

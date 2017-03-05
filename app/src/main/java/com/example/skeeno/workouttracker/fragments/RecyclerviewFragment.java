@@ -1,7 +1,6 @@
 package com.example.skeeno.workouttracker.fragments;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +20,9 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +36,7 @@ public class RecyclerviewFragment extends Fragment {
     private Unbinder mUnbinder;
 
     private WorkoutAdapter mWorkoutAdapter;
-
+    private ArrayList<Workout> mWorkoutArrayList = new ArrayList<>();
 
     public RecyclerviewFragment() {
         // Required empty public constructor
@@ -60,14 +62,14 @@ public class RecyclerviewFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        updateUI();
+        mRecyclerView.setAdapter(new WorkoutAdapter(getData()));
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateUI();
+        ((WorkoutAdapter)mRecyclerView.getAdapter()).updateData(getData());
     }
 
     @Override
@@ -82,12 +84,15 @@ public class RecyclerviewFragment extends Fragment {
         mUnbinder.unbind();
     }
 
-    private void updateUI() {
+    private ArrayList<Workout> getData() {
+        mWorkoutArrayList.clear();
         WorkoutManager workoutManager = WorkoutManager.getInstance(getActivity());
-        ArrayList<Workout> workouts = workoutManager.getWorkoutList();
-
-        mWorkoutAdapter = new WorkoutAdapter(workouts);
-        mRecyclerView.setAdapter(mWorkoutAdapter);
+        workoutManager.getObservableWorkoutData()
+                .flatMap(Observable::from)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mWorkoutArrayList::add);
+        return mWorkoutArrayList;
     }
 
 }
