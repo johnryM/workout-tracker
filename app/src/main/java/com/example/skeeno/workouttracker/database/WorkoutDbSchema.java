@@ -13,7 +13,6 @@ public class WorkoutDbSchema {
             public static final String WORKOUT_NAME = "workout_name";
             public static final String WORKOUT_DATE = "workout_date";
             public static final String WORKOUT_COMPLETED = "workout_completed";
-            public static final String WORKOUT_EXERCISES_KEY = "workout_exercises_key";
         }
 
     }

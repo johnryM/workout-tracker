@@ -25,7 +25,8 @@ public class ExerciseEditor extends AppCompatActivity {
             FragmentManager fm = getSupportFragmentManager();
             WorkoutEditorFragment weFragment = (WorkoutEditorFragment) fm.findFragmentById(R.id.fragment_workout_editor_container);
             if (weFragment == null) {
-                weFragment =  WorkoutEditorFragment.newInstance("cake", "cake");
+                //TODO fix me
+                weFragment =  WorkoutEditorFragment.newInstance(null);
                 fm.beginTransaction().add(R.id.activity_workout_exercise, weFragment).commit();
             }
         }

@@ -8,7 +8,9 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.example.skeeno.workouttracker.R;
+import com.example.skeeno.workouttracker.activities.WorkoutEditor;
 import com.example.skeeno.workouttracker.model.Workout;
+import com.example.skeeno.workouttracker.utils.Helper;
 
 import java.util.ArrayList;
 
@@ -21,7 +23,7 @@ import butterknife.ButterKnife;
 
 public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutHolder> {
 
-    ArrayList mWorkoutList = new ArrayList();
+    private ArrayList <Workout>mWorkoutList = new ArrayList<>();
 
     public WorkoutAdapter(ArrayList<Workout> list) {
         mWorkoutList = list;
@@ -36,7 +38,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
     @Override
     public void onBindViewHolder(WorkoutHolder holder, int position) {
         WorkoutHolder workoutHolder = holder;
-        workoutHolder.bindWorkoutDataToHolder((Workout) mWorkoutList.get(position));
+        workoutHolder.bindWorkoutDataToHolder(mWorkoutList.get(position));
     }
 
     @Override
@@ -44,17 +46,14 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
         return mWorkoutList.size();
     }
 
-    public void updateData(ArrayList<Workout> list) {
-        if (mWorkoutList != null) {
+    public void updateWorkouts(ArrayList<Workout> wlist) {
+        if (wlist != null && wlist.size() != 0) {
             mWorkoutList.clear();
-            mWorkoutList.addAll(list);
-        } else {
-            mWorkoutList = list;
+            mWorkoutList.addAll(wlist);
         }
-        notifyDataSetChanged();
     }
 
-    public class WorkoutHolder extends RecyclerView.ViewHolder {
+    public class WorkoutHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         @BindView(R.id.workout_text)
         TextView mWorkoutTitle;
@@ -63,16 +62,25 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutH
         @BindView(R.id.completed_checkbox)
         CheckBox mCompletedCheckbox;
 
+        Workout workout;
+
 
         public WorkoutHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
         }
 
-        public void bindWorkoutDataToHolder(Workout workout) {
+        public void bindWorkoutDataToHolder(Workout aworkout) {
+            workout = aworkout;
             mWorkoutTitle.setText(workout.getName());
-            mDateText.setText(workout.getDate().getTime().toString());
+            mDateText.setText(Helper.formatDate(workout.getDate().getTime()));
             mCompletedCheckbox.setChecked(workout.isCompleted());
+        }
+
+        @Override
+        public void onClick(View v) {
+            v.getContext().startActivity(WorkoutEditor.newInstance(v.getContext(), workout));
         }
     }
 }

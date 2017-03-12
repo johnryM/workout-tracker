@@ -50,15 +50,12 @@ public class DatePickerFragment extends DialogFragment {
         return new AlertDialog.Builder(getActivity()).
                 setView(v).
                 setTitle("Pick release date").
-                setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int year = mDatePicker.getYear();
-                        int month = mDatePicker.getMonth();
-                        int day = mDatePicker.getDayOfMonth();
-                        GregorianCalendar calendar = new GregorianCalendar(year, month, day);
-                        sendResult(Activity.RESULT_OK, calendar);
-                    }
+                setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    int year = mDatePicker.getYear();
+                    int month = mDatePicker.getMonth();
+                    int day = mDatePicker.getDayOfMonth();
+                    GregorianCalendar calendar = new GregorianCalendar(year, month, day);
+                    sendResult(Activity.RESULT_OK, calendar);
                 }).
                 create();
     }

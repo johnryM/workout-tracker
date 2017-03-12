@@ -20,8 +20,8 @@ public class Exercise implements Parcelable {
 
     protected Exercise(Parcel in) {
         weight = in.readDouble();
-        name = in.readString();
         numOfReps = in.readInt();
+        name = in.readString();
     }
 
     public static final Creator<Exercise> CREATOR = new Creator<Exercise>() {
@@ -39,8 +39,8 @@ public class Exercise implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeDouble(weight);
-        dest.writeString(name);
         dest.writeInt(numOfReps);
+        dest.writeString(name);
     }
 
     public String getName() {

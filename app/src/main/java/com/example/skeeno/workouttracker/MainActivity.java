@@ -5,15 +5,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.skeeno.workouttracker.activities.WorkoutEditor;
 import com.example.skeeno.workouttracker.fragments.RecyclerviewFragment;
+import com.example.skeeno.workouttracker.utils.Helper;
 
 public class MainActivity extends AppCompatActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(WorkoutEditor.newInstance(MainActivity.this));
-            }
-        });
+        fab.setOnClickListener(view -> startActivity(WorkoutEditor.newInstance(MainActivity.this, Helper.getDefaultWorkout())));
 
         if (savedInstanceState == null) {
 

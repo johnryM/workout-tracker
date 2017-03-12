@@ -4,11 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.example.skeeno.workouttracker.database.WorkoutBaseHelper;
 import com.example.skeeno.workouttracker.database.WorkoutCursorWrapper;
 import com.example.skeeno.workouttracker.database.WorkoutDbSchema.WorkoutTable;
+import com.example.skeeno.workouttracker.database.WorkoutDbSchema.WorkoutTable.Columns;
 import com.example.skeeno.workouttracker.utils.Helper;
 import com.example.skeeno.workouttracker.utils.RxUtils;
 
@@ -36,8 +37,6 @@ public class WorkoutManager {
         mContext = context.getApplicationContext();
         mDatabase = new WorkoutBaseHelper(mContext).getWritableDatabase();
         mWorkoutList = new ArrayList<>();
-
-        //setUpTempData();
     }
 
     public static WorkoutManager getInstance(Context context) {
@@ -52,7 +51,7 @@ public class WorkoutManager {
         return RxUtils.makeObservable(getCallableData(getWorkoutList()));
     }
 
-    private ArrayList<Workout> getWorkoutList() {
+    public ArrayList<Workout> getWorkoutList() {
         WorkoutCursorWrapper cursor = queryWorkouts(null, null);
         mWorkoutList.clear();
 
@@ -78,7 +77,7 @@ public class WorkoutManager {
 
     public Workout getWorkout(UUID id) {
         WorkoutCursorWrapper cursor = queryWorkouts(
-                WorkoutTable.Columns.WORKOUT_UUID + " = ?",
+                Columns.WORKOUT_UUID + " = ?",
                 new String[] { id.toString() }
         );
 
@@ -99,17 +98,29 @@ public class WorkoutManager {
         ContentValues values = getContentValues(workout);
 
         mDatabase.update(WorkoutTable.NAME, values,
-                WorkoutTable.Columns.WORKOUT_UUID + " = ?",
+                Columns.WORKOUT_UUID + " = ?",
                 new String[] { uuidString });
 
     }
 
+    public void deleteWorkout(UUID workoutId) {
+        //TODO check this. Its probably broken
+        try {
+            mDatabase.delete(WorkoutTable.NAME,
+                    Columns.WORKOUT_UUID + " = ?",
+                    new String[] {workoutId.toString()});
+        } catch(Exception e) {
+            e.printStackTrace();
+            Toast.makeText(mContext, "Delete failed. Please try again", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private static ContentValues getContentValues(Workout workout) {
         ContentValues values = new ContentValues();
-        values.put(WorkoutTable.Columns.WORKOUT_UUID, workout.getUuid().toString());
-        values.put(WorkoutTable.Columns.WORKOUT_NAME, workout.getName());
-        values.put(WorkoutTable.Columns.WORKOUT_DATE, Helper.convertDateToMilis(workout.getDate()));
-        values.put(WorkoutTable.Columns.WORKOUT_COMPLETED, workout.isCompleted() ? 1 : 0);
+        values.put(Columns.WORKOUT_UUID, workout.getUuid().toString());
+        values.put(Columns.WORKOUT_NAME, workout.getName());
+        values.put(Columns.WORKOUT_DATE, Helper.convertDateToMilis(workout.getDate()));
+        values.put(Columns.WORKOUT_COMPLETED, workout.isCompleted() ? 1 : 0);
         //TODO add exercise implementation
         return values;
     }
@@ -130,11 +141,6 @@ public class WorkoutManager {
     }
 
     private Callable<ArrayList<Workout>> getCallableData(final ArrayList<Workout> workouts) {
-        return  new Callable<ArrayList<Workout>>() {
-            @Override
-            public ArrayList<Workout> call() throws Exception {
-                return workouts;
-            }
-        };
+        return () -> workouts;
     }
 }

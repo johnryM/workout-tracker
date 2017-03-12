@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.skeeno.workouttracker.R;
 import com.example.skeeno.workouttracker.model.Workout;
 import com.example.skeeno.workouttracker.model.WorkoutManager;
+import com.example.skeeno.workouttracker.utils.Helper;
 
 import java.util.GregorianCalendar;
 import java.util.UUID;
@@ -32,7 +33,7 @@ import butterknife.Unbinder;
 
 public class WorkoutEditorFragment extends Fragment {
 
-
+    private static final String EXTRA_WORKOUT = "extra_workout";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
 
@@ -47,15 +48,18 @@ public class WorkoutEditorFragment extends Fragment {
     Unbinder mUnbinder;
 
     private GregorianCalendar mCalendar;
+    private Workout mWorkout;
 
     public WorkoutEditorFragment() {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-    public static WorkoutEditorFragment newInstance(String param1, String param2) {
+    public static WorkoutEditorFragment newInstance(Workout workout) {
         WorkoutEditorFragment fragment = new WorkoutEditorFragment();
         Bundle args = new Bundle();
+
+        args.putParcelable(EXTRA_WORKOUT, workout);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -64,8 +68,6 @@ public class WorkoutEditorFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        if (getArguments() != null) {
-        }
     }
 
     @Override
@@ -74,10 +76,12 @@ public class WorkoutEditorFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_workout_editor, container, false);
         mUnbinder = ButterKnife.bind(this, view);
 
-        Toolbar workoutToolBar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(workoutToolBar);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setUpToolBar(view);
+
+        mWorkout = getArguments().getParcelable(EXTRA_WORKOUT);
+        if (mWorkout != null) {
+            fillInExistingWorkout();
+        }
 
         return view;
     }
@@ -97,7 +101,7 @@ public class WorkoutEditorFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             mCalendar = (GregorianCalendar) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             if (mCalendar != null) {
-                mButtonWorkoutDate.setText(mCalendar.getTime().toString());
+                mButtonWorkoutDate.setText(Helper.formatDate(mCalendar.getTime()));
             }
         }
     }
@@ -114,12 +118,13 @@ public class WorkoutEditorFragment extends Fragment {
         if (id == R.id.action_save_workout) {
             if (validateWorkout()) {
                 WorkoutManager workoutManager = WorkoutManager.getInstance(getActivity());
-                Workout workout = new Workout(UUID.randomUUID(),
-                        mEditTextWorkoutName.getText().toString(),
-                        mCalendar,
-                        mCheckboxWorkoutCompleted.isChecked(),
-                        null);
-                workoutManager.addWorkout(workout);
+
+                if(mWorkout != null) {
+                    mWorkout.setName(mEditTextWorkoutName.getText().toString());
+                    mWorkout.setDate(mCalendar);
+                    mWorkout.setCompleted(mCheckboxWorkoutCompleted.isChecked());
+                    workoutManager.addWorkout(mWorkout);
+                }
             }
         }
         return super.onOptionsItemSelected(item);
@@ -145,4 +150,20 @@ public class WorkoutEditorFragment extends Fragment {
         dialog.setTargetFragment(WorkoutEditorFragment.this, REQUEST_DATE);
         dialog.show(fm, DIALOG_DATE);
     }
+
+    private void fillInExistingWorkout() {
+        mCalendar = mWorkout.getDate();
+
+        mEditTextWorkoutName.setText(mWorkout.getName());
+        mButtonWorkoutDate.setText(Helper.formatDate(mWorkout.getDate().getTime()));
+        mCheckboxWorkoutCompleted.setChecked(mWorkout.isCompleted());
+    }
+
+    private void setUpToolBar(View view) {
+        Toolbar workoutToolBar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(workoutToolBar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
 }

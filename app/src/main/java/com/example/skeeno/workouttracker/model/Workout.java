@@ -17,11 +17,11 @@ public class Workout implements Parcelable {
     private String name;
     private GregorianCalendar date;
     private boolean isCompleted;
-    private ArrayList<Exercise> exercises;
+    private ArrayList<Exercise> exercises = new ArrayList<>();
     private UUID uuid;
 
-    public Workout(UUID id) {
-        uuid = id;
+    public Workout() {
+        uuid = UUID.randomUUID();
     }
 
     public Workout(UUID id, String name, GregorianCalendar date, boolean isCompleted, ArrayList<Exercise> exercises) {
@@ -33,6 +33,7 @@ public class Workout implements Parcelable {
     }
 
     protected Workout(Parcel in) {
+        uuid = UUID.fromString(in.readString());
         name = in.readString();
         date = Helper.convertMilisToDate(in.readLong());
         isCompleted = in.readByte() != 0;
@@ -53,6 +54,7 @@ public class Workout implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uuid.toString());
         dest.writeString(name);
         dest.writeLong(Helper.convertDateToMilis(date));
         dest.writeByte((byte) (isCompleted ? 1 : 0));

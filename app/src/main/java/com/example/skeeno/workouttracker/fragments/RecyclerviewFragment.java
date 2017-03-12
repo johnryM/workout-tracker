@@ -36,7 +36,6 @@ public class RecyclerviewFragment extends Fragment {
     private Unbinder mUnbinder;
 
     private WorkoutAdapter mWorkoutAdapter;
-    private ArrayList<Workout> mWorkoutArrayList = new ArrayList<>();
 
     public RecyclerviewFragment() {
         // Required empty public constructor
@@ -62,14 +61,13 @@ public class RecyclerviewFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mRecyclerView.setAdapter(new WorkoutAdapter(getData()));
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((WorkoutAdapter)mRecyclerView.getAdapter()).updateData(getData());
+        updateUI();
     }
 
     @Override
@@ -85,14 +83,25 @@ public class RecyclerviewFragment extends Fragment {
     }
 
     private ArrayList<Workout> getData() {
-        mWorkoutArrayList.clear();
+        //TODO this is a bit dodgey doesnt update on backpress
+        ArrayList<Workout> workoutArrayList = new ArrayList<>();
         WorkoutManager workoutManager = WorkoutManager.getInstance(getActivity());
         workoutManager.getObservableWorkoutData()
-                .flatMap(Observable::from)
                 .subscribeOn(Schedulers.io())
+                .flatMap(dataList -> Observable.from(dataList))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mWorkoutArrayList::add);
-        return mWorkoutArrayList;
+                .subscribe(dataItem -> workoutArrayList.add(dataItem));
+        return workoutArrayList;
+    }
+
+    private void updateUI() {
+        if (mWorkoutAdapter == null) {
+            mWorkoutAdapter = new WorkoutAdapter(getData());
+            mRecyclerView.setAdapter(mWorkoutAdapter);
+        } else {
+            mWorkoutAdapter.updateWorkouts(getData());
+            mWorkoutAdapter.notifyDataSetChanged();
+        }
     }
 
 }
